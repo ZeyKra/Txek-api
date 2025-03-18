@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { Player } from "@/app/types/player"
 import { createPlayer } from "@/app/backend/surreal-actions"
+import { createStatisticsProfile, createStatisticsRelation } from "@/app/backend/surreal-statistics"
 
 // Simulation d'une base de données
 const users: Player[] = []
@@ -12,7 +13,6 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const player = await request.json()
-    console.log(player);
 
     // Validation basique
     if (!player.username) {
@@ -24,7 +24,13 @@ export async function POST(request: Request) {
     }
 
     const playerCreation = await createPlayer(playerData);
-
+    
+    const statisticsProfile = await createStatisticsProfile();
+    await createStatisticsRelation(playerCreation.id, statisticsProfile.id);
+    
+    // DEBUG : Logging
+    //console.log(playerCreation);
+    //console.log(statisticsProfileCreationResponse);
 
     return NextResponse.json(playerCreation, { status: 201 })
   } catch (error) {
