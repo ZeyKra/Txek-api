@@ -1,17 +1,24 @@
 import { NextResponse } from "next/server"
-import type { Player } from "@/types/player"
-
+import type { Player } from "@/app/types/player"
+import { getDatabasePlayerInformations } from "@/app/backend/surreal-actions"
 // Simulation d'une base de données
 const users: Player[] = []
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const user = users.find((u) => u.id === params.id)
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
-  if (!user) {
-    return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 404 })
+  try {
+    const playersInformations = await getDatabasePlayerInformations(id)
+
+    if (!playersInformations) {
+      return NextResponse.json({ error: "Player non trouvé" }, { status: 404 })
+    }
+
+    return NextResponse.json(playersInformations)
+  } catch(error) {
+    return NextResponse.json({ error: "Erreur lors de la recuperation d'un joueur" }, { status: 500 })
   }
 
-  return NextResponse.json(user)
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {

@@ -1,11 +1,6 @@
-export interface User {
-  id: string
+export interface Player {
+  id?: string
   username: string
-  email?: string
-  createdAt: Date
-  stats: {
-    gamesPlayed: number
-    gamesWon: number
-  }
+  created_at?: Date
 }
 
