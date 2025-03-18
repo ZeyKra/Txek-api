@@ -1,6 +1,6 @@
 import Surreal from "surrealdb"
 import { Player } from "../types/player"
-import { surrealResponse } from "../types/surreal-response"
+import { SurrealResponse } from "../types/surreal-response"
 
 interface ConnectionSettings {
     url: string 
@@ -54,7 +54,7 @@ export async function getDatabasePlayerInformations(playerId: string) {
     const db = await getSurrealClient()
 
     try {
-        const playersInformations: surrealResponse<any> = await db.query(`SELECT * FROM Player:${playerId};`)
+        const playersInformations: SurrealResponse<any> = await db.query(`SELECT * FROM Player:${playerId};`)
         db.close();
         return playersInformations[0][0]
     } catch(error) {
@@ -73,7 +73,7 @@ export async function createPlayer(playerData: Player) {
 
 
     try {
-        const playerCreation: surrealResponse<any> = await db.query(`CREATE Player SET username = ${JSON.stringify(playerData.username)}, created_at = time::now();`)
+        const playerCreation: SurrealResponse<any> = await db.query(`CREATE Player SET username = ${JSON.stringify(playerData.username)}, created_at = time::now();`)
         db.close();
         return playerCreation[0][0]
     } catch(error) {

@@ -1,5 +1,5 @@
-export type surrealResponse<T> = T[][] | T[];
+export type SurrealResponse<T> = T[][] | T[];
 
 // Example usage:
-// let numbers: NestedArray<number> = [[1, 2], [3, 4]];
-// let strings: NestedArray<string> = [['a', 'b'], ['c', 'd']];
+// let numbers: SurrealResponse<number> = [[1, 2], [3, 4]];
+// let strings: SurrealResponse<string> = [['a', 'b'], ['c', 'd']];

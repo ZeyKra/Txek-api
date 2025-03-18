@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import type { Round } from "@/types/round"
-import type { Match } from "@/types/match"
+import type { Round } from "@/app/types/round"
+import type { Match } from "@/app/types/match"
 
 // Simulation d'une base de données
 const matches: Match[] = []
