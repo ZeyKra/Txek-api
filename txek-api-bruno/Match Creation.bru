@@ -1,0 +1,22 @@
+meta {
+  name: Match Creation
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:3000/api/v1/matches/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "local_player": ["John", "Hubert"],
+    "owner": "Player:yb66gbgaprrtqffe580j"
+  }
+}

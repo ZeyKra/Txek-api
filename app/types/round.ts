@@ -1,14 +1,11 @@
-export interface Move {
-  playerId: string
-  cardId: string
-  timestamp: Date
+export interface RoundRelation {
+  
 }
 
 export interface Round {
-  id: string
-  roundNumber: number
-  moves: Move[]
-  winner: string | null // ID du joueur gagnant le round
-  createdAt: Date
+  id?: string
+  created_at: string
+  round_index: number
+  winner?: string | undefined // ID du joueur gagnant le round
 }
 

@@ -1,6 +1,8 @@
 import Surreal from "surrealdb"
-import { Player } from "../types/player"
-import { SurrealResponse } from "../types/surreal-response"
+import { Player } from "@/app/types/player"
+import { SurrealResponse } from "@/app/types/surreal-response"
+import { Round } from "@/app/types/round"
+import { Match } from "../types/match"
 
 interface ConnectionSettings {
     url: string 
@@ -80,6 +82,42 @@ export async function createPlayer(playerData: Player) {
         console.error("Failed to create player ", error)
         throw new Error("Failed to get player")
     } 
+}
+
+export async function createMatch(matchData: Match) {
+    const db = await getSurrealClient()
+
+    try {
+        const matchCreation: SurrealResponse<any> = await db.query(`CREATE ONLY Match CONTENT $item`, {item: matchData})
+
+        db.close();
+        console.log(matchCreation); // DEBUG
+        return matchCreation[0]
+    } catch(error) {
+        console.error("Failed to create Match:", error)
+        throw new Error("Failed to create Match")
+    }
+}
+
+export async function createRound(matchId: string, roundData: Round) {
+    const db = await getSurrealClient()
+
+    try {
+
+        const roundCreationData: SurrealResponse<any> = await db.query(`INSERT INTO ROUND ${JSON.stringify(roundData)}`)
+
+        const relationCreattion: SurrealResponse<any> = await db.query(`RELATE Round:${roundCreationData[0][0].id}->belongs_to_match->Match:${matchId} `)
+        db.close();
+        return roundCreationData[0][0]
+    } catch(error) {
+        console.error("Failed to create Round:", error)
+        throw new Error("Failed to create Round")
+    } 
+}
+
+// TODO : Match exist ?
+export async function doesMatchExist(matchId: string, matchData: Match) {
+    const db = await getSurrealClient()
 }
 
 export async function testDatabaseConnexion() {
