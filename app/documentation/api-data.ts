@@ -17,50 +17,49 @@ export interface ApiSection {
 
 export const apiDocumentation: ApiSection[] = [
   {
-    title: "Utilisateurs",
-    description: "Endpoints pour la gestion des utilisateurs du jeu de cartes.",
+    title: "Joueurs",
+    description: "Endpoints pour la gestion des Joueurs de Txek.",
     endpoints: [
       {
-        title: "Liste des utilisateurs",
+        title: "Liste des Joueurs",
         method: "GET",
-        path: "/api/v1/users",
-        description: "Récupère la liste de tous les utilisateurs.",
-        response: "Tableau d'objets utilisateur",
+        path: "/api/v1/player",
+        description: "Récupère la liste de tous les joueurs.",
+        response: "Tableau d'objets joueurs",
       },
       {
-        title: "Créer un utilisateur",
+        title: "Créer un joueur",
         method: "POST",
-        path: "/api/v1/users",
-        description: "Crée un nouvel utilisateur.",
+        path: "/api/v1/player",
+        description: "Crée un nouveau joueur.",
         requestBody: `{
-  "username": "joueur1",
-  "email": "joueur1@example.com"
+  "username": "joueur1"
 }`,
-        response: "Objet utilisateur créé",
+        response: "Objet Joueur créé",
       },
       {
-        title: "Détails d'un utilisateur",
+        title: "Détails d'un joueur",
         method: "GET",
         path: "/api/v1/users/{id}",
-        description: "Récupère les détails d'un utilisateur spécifique.",
-        response: "Objet utilisateur",
+        description: "Récupère les détails d'un joueur spécifique.",
+        response: "Objet joueur",
       },
       {
-        title: "Mettre à jour un utilisateur",
+        title: "Mettre à jour un joueur",
         method: "PUT",
         path: "/api/v1/users/{id}",
-        description: "Met à jour les informations d'un utilisateur.",
+        description: "Met à jour les informations d'un joueur.",
         requestBody: `{
   "username": "nouveauNom",
   "email": "nouveau@example.com"
 }`,
-        response: "Objet utilisateur mis à jour",
+        response: "Objet joueur mis à jour",
       },
       {
-        title: "Supprimer un utilisateur",
+        title: "Supprimer un joueur",
         method: "DELETE",
         path: "/api/v1/users/{id}",
-        description: "Supprime un utilisateur.",
+        description: "Supprime un joueur.",
         response: "Message de confirmation",
       },
     ],
@@ -82,7 +81,8 @@ export const apiDocumentation: ApiSection[] = [
         path: "/api/v1/matches",
         description: "Crée un nouveau match.",
         requestBody: `{
-  "players": ["id-joueur-1", "id-joueur-2"]
+  "local_player": ["Joueur1", "Joueur2"],
+  "owner": "Player:<id>"
 }`,
         response: "Objet match créé",
       },
@@ -127,15 +127,9 @@ export const apiDocumentation: ApiSection[] = [
         title: "Créer un round",
         method: "POST",
         path: "/api/v1/matches/{id}/rounds",
-        description: "Crée un nouveau round pour un match.",
+        description: "Crée un nouveau round pour le match {id}.",
         requestBody: `{
-  "moves": [
-    {
-      "playerId": "id-joueur-1",
-      "cardId": "id-carte-1",
-      "timestamp": "2023-07-14T12:00:00Z"
-    }
-  ]
+  "round_index": number
 }`,
         response: "Objet round créé",
       },
