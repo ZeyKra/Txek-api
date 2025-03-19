@@ -12,15 +12,16 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const player = await request.json()
+    const requestData = await request.json()
 
     // Validation basique
-    if (!player.username) {
+    if (!requestData.username) {
       return NextResponse.json({ error: "Le nom d'utilisateur est requis" }, { status: 400 })
     }
 
     const playerData: Player = {
-      username: player.username,
+      username: requestData.username,
+      created_at: new Date()
     }
 
     const playerCreation = await createPlayer(playerData);

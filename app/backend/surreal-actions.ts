@@ -74,9 +74,9 @@ export async function createPlayer(playerData: Player) {
     const db = await getSurrealClient()
 
     try {
-        const playerCreation: SurrealResponse<any> = await db.query(`CREATE Player SET username = ${JSON.stringify(playerData.username)}, created_at = time::now();`)
+        const playerCreation: SurrealResponse<any> = await db.query(`CREATE ONLY Player CONTENT $item`, {item: playerData})
         db.close();
-        return playerCreation[0][0]
+        return playerCreation[0]
     } catch(error) {
         console.error("Failed to create player ", error)
         throw new Error("Failed to get player")
