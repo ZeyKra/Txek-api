@@ -4,8 +4,8 @@ import type { Match } from "@/app/types/match"
 // Simulation d'une base de données
 const matches: Match[] = []
 
-export async function GET(request: Request, { params }: { params: { id: string; roundId: string } }) {
-  const match = matches.find((m) => m.id === params.id)
+export async function GET(request: Request, { params }: { params: { matchid: string; roundId: string } }) {
+  const match = matches.find((m) => m.id === params.matchid)
 
   if (!match) {
     return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })

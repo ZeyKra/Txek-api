@@ -24,9 +24,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const requestData = await request.json()
-    console.log(requestData);
     
-
     //Validation basique
     if (!requestData.owner) {
        return NextResponse.json({ error: "Un match doit avoir un Proprietaire" }, { status: 400 })
