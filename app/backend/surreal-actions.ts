@@ -121,13 +121,14 @@ export async function createRound(roundData: Round) {
     } 
 }
 
-export async function relateRoundToMatch(matchId: string, roundId: string) {
+export async function relateRoundToMatch(roundId: string, matchId: string) {
     const db = await getSurrealClient()
 
     try {
-        const relationCreattion: SurrealResponse<any> = await db.query(`RELATE Round:${roundId}->belongs_to_match->Match:${matchId} `)
+        const roundRelationContent = await generateRoundRelationContent(matchId)
+        const relationCreation: SurrealResponse<any> = await db.query(`RELATE ${roundId}->belongs_to_match->Match:${matchId} CONTENT $item`, {item: roundRelationContent})
         db.close();
-        return relationCreattion[0][0]  
+        return relationCreation[0]
     } catch(error) {
         console.error("Failed to create Round:", error)
         throw new Error("Failed to create Round")
@@ -138,17 +139,24 @@ export async function generateRoundRelationContent(matchId: string) {
     const db = await getSurrealClient();
 
     try {
-        const matchInformations: SurrealResponse<any> = await getMatchInformations(matchId);
+        const matchInformations = await getMatchInformations(matchId);
 
-        console.log("matchInformations:", matchInformations); // DEBUG
+        //console.log("matchInformations:", matchInformations); // DEBUG
         
-        const roundRelationContent = {
-            local_player: matchInformations[0].local_player
+        const roundRelationContent: any = {
+            local_player: matchInformations.local_player
+        }
+        
+        if(matchInformations.local_player.length > 0) {
+            matchInformations.local_player.map((localPlayer : string) => {
+                roundRelationContent[`deck_${localPlayer}`] = []
+            })
         }
 
-        db.close();
-        //return roundRelationContent
+        //console.log("roundRelationContent:", roundRelationContent); // DEBUG
         
+        db.close();
+        return roundRelationContent 
     } catch(error) {
         console.error("Failed to generate round relation cotent:", error)
         throw new Error("Failed to generate round relation content")
