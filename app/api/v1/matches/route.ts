@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import type { Match } from "@/app/types/match"
 import { createMatch } from "@/app/backend/surreal-actions"
 import { SurrealResponse } from "@/app/types/surreal-response"
-import { RecordId, StringRecordId } from "surrealdb"
+import { StringRecordId } from "surrealdb"
 
 // Simulation d'une base de données
 const matches: Match[] = []
@@ -30,15 +30,16 @@ export async function POST(request: Request) {
        return NextResponse.json({ error: "Un match doit avoir un Proprietaire" }, { status: 400 })
     }
 
+    //const playerList: any[] = await generatePlayerListRecordId(requestData.player); 
+    //console.log(playerList); // DEBUG
+
     const newMatch: Match = {
       completed_at: new Date(),
       created_at: new Date(),
       local_player: requestData.local_player, // IDs des utilisateurs
-      local_player_count: requestData.local_player.length,
       owner: new StringRecordId(requestData.owner), // ID de l'utilisateur TODO: Ajouter l'owner
-      player_count: 0,
       status: "created",
-      round_count: 8,
+      round_max: requestData.round_max,
       winner: undefined // ID de l'utilisateur gagnant
     }
 

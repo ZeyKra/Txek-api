@@ -1,8 +1,8 @@
-import Surreal from "surrealdb"
+import Surreal, { StringRecordId } from "surrealdb"
 import { Player } from "@/app/types/player"
 import { SurrealResponse } from "@/app/types/surreal-response"
 import { Round } from "@/app/types/round"
-import { Match } from "../types/match"
+import { Match } from "@/app/types/match"
 
 interface ConnectionSettings {
     url: string 
@@ -83,10 +83,16 @@ export async function createPlayer(playerData: Player) {
     } 
 }
 
+/**
+ * Créer un match dans la base de données
+ * @param matchData - Les données du match à créer
+ * @returns Les données du match créé
+ * @throws {Error} Si la création du match échoue
+ */
 export async function createMatch(matchData: Match) {
     const db = await getSurrealClient()
 
-    try {
+    try {        
         const matchCreation: SurrealResponse<any> = await db.query(`CREATE ONLY Match CONTENT $item`, {item: matchData})
 
         db.close();
@@ -95,6 +101,47 @@ export async function createMatch(matchData: Match) {
         console.error("Failed to create Match:", error)
         throw new Error("Failed to create Match")
     }
+}
+
+/**
+ * TODO : REMOVE
+ * Génère liste de Records id pour les joueurs afin de créer les relations
+ * @param {string[]} playerList - Array of player identifiers
+ * @returns
+ */
+export async function generatePlayerListRecordId(playerList: string[]) {
+
+    const playerListField: StringRecordId[] = []
+
+    
+    playerList.map((player: string, index: number) => {
+        if(player.match(/^Player:[a-zA-Z0-9]+$/)) {
+            playerListField[index] = new StringRecordId(player);
+        }
+    })
+
+    return playerListField
+}
+
+
+export async function relatePlayerToRound(playerList: string[],roundRecord: string) {
+    const db = await getSurrealClient()
+
+    const relationData: any = {
+        deck: []
+    }
+
+    try {
+        playerList.map(async (playerRecord: string) => {
+            if(playerRecord.match(/^Player:[a-zA-Z0-9]+$/)) {
+                await db.query(`RELATE ${playerRecord}->plays_in_round->${roundRecord} CONTENT $item`, {item: relationData})
+            }
+        })
+    } catch(error) {
+        console.error("Failed to relate player to match:", error)
+        throw new Error("Failed to relate player to match")
+    }
+
 }
 
 /**
@@ -121,6 +168,13 @@ export async function createRound(roundData: Round) {
     } 
 }
 
+/**
+ * Relie un round à un match existant
+ * @param roundId - L'identifiant du round à relier
+ * @param matchId - L'identifiant du match auquel le round sera relié
+ * @returns Les données de la relation créée
+ * @throws {Error} Si la relation échoue
+ */
 export async function relateRoundToMatch(roundId: string, matchId: string) {
     const db = await getSurrealClient()
 
@@ -135,6 +189,12 @@ export async function relateRoundToMatch(roundId: string, matchId: string) {
     }
 }
 
+/**
+ * Génère le contenu de la relation entre un round et un match
+ * @param matchId - L'identifiant du match auquel le round sera relié
+ * @returns Le contenu de la relation
+ * @throws {Error} Si la génération du contenu de la relation échoue
+ */
 export async function generateRoundRelationContent(matchId: string) {
     const db = await getSurrealClient();
 

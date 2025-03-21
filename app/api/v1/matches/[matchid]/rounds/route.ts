@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import type { Round } from "@/app/types/round"
 import type { Match } from "@/app/types/match"
-import { createRound, getSurrealClient, relateRoundToMatch } from "@/app/backend/surreal-actions"
+import { createRound, getSurrealClient, relatePlayerToRound, relateRoundToMatch } from "@/app/backend/surreal-actions"
 
 // Simulation d'une base de données
 const matches: Match[] = []
@@ -24,7 +24,7 @@ export async function POST(request: Request, { params }: { params: { matchid: st
     const requestData = await request.json()
     const db = await getSurrealClient();
 
-    //console.log(requestData, matchid);
+    //console.log(requestData, matchid); // DEBUG
     
     const newRoundData: Round = {
       created_at: new Date(),
@@ -36,6 +36,7 @@ export async function POST(request: Request, { params }: { params: { matchid: st
     let roundCreationData = await createRound(newRoundData);
     
     await relateRoundToMatch(roundCreationData.id, matchid);
+    await relatePlayerToRound(requestData.player, roundCreationData.id)
     //console.log(relateRoundToMatchData); // DEBUG 
     
 

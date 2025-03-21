@@ -1,18 +1,15 @@
-import Surreal, { RecordId, StringRecordId } from "surrealdb"
-import type { Round } from "./round"
+import { StringRecordId } from "surrealdb"
 
 export type MatchStatus = "created" | "in_progress" | "completed" | "cancelled"
-
+  
 export interface Match {
   id?: string,
   completed_at?: Date,
   created_at?: Date,
-  local_player: string[], // IDs des utilisateurs
-  local_player_count: number,
+  local_player: string[] // IDs des utilisateurs
   owner: StringRecordId, // ID de l'utilisateur
-  player_count: number,
   status: MatchStatus,
-  round_count: number,
+  round_max: number,
   winner: string | undefined // ID de l'utilisateur gagnant
 }
 
