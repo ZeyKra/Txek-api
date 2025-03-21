@@ -5,8 +5,8 @@ import { getMatchRounds } from "@/app/backend/surreal-actions";
 // Simulation d'une base de données
 const matches: Match[] = []
 
-export async function GET(request: Request, { params }: { params: { matchid: string } }) {
-  const matchId = await params.matchid;
+export async function GET(request: Request, { params }: { params: { matchId: string } }) {
+  const matchId = await params.matchId;
 
   if (!matchId) {
     return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })

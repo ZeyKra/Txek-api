@@ -2,29 +2,30 @@ import { NextResponse } from "next/server"
 import type { Round } from "@/app/types/round"
 import type { Match } from "@/app/types/match"
 import { createRound, getMatchRounds, getSurrealClient, relatePlayerToRound, relateRoundToMatch } from "@/app/backend/surreal-actions"
+import { match } from "assert"
 
 // Simulation d'une base de données
 const matches: Match[] = []
 
-export async function GET(request: Request, { params }: { params: { matchid: string } }) {
-  const { matchid } = await params;
+export async function GET(request: Request, { params }: { params: { matchId: string } }) {
+  const { matchId } = await params;
 
   // TODO: Check if match exist
-  if (!matchid) {
+  if (!matchId) {
     return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })
   }
   
-  const matchRounds = await getMatchRounds(matchid);
+  const matchRounds = await getMatchRounds(matchId);
   
 
   return NextResponse.json(matchRounds)
 }
 
 //create round
-export async function POST(request: Request, { params }: { params: { matchid: string, round_index: number } }) {
+export async function POST(request: Request, { params }: { params: { matchId: string, round_index: number } }) {
   try {
 
-    const { matchid } = await params;
+    const { matchId } = await params;
     const requestData = await request.json()
     const db = await getSurrealClient();
 
@@ -39,7 +40,7 @@ export async function POST(request: Request, { params }: { params: { matchid: st
     // Data srtucture 'Round:<id>'
     let roundCreationData = await createRound(newRoundData);
     
-    await relateRoundToMatch(roundCreationData.id, matchid);
+    await relateRoundToMatch(roundCreationData.id, matchId);
     await relatePlayerToRound(requestData.player, roundCreationData.id)
     //console.log(relateRoundToMatchData); // DEBUG 
     
