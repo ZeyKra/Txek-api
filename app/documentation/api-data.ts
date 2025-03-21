@@ -90,14 +90,14 @@ export const apiDocumentation: ApiSection[] = [
       {
         title: "Détails d'un match",
         method: "GET",
-        path: "/api/v1/matches/{id}",
+        path: "/api/v1/matches/{matchId}",
         description: "Récupère les détails d'un match spécifique.",
         response: "Objet match",
       },
       {
         title: "Mettre à jour un match",
         method: "PATCH",
-        path: "/api/v1/matches/{id}",
+        path: "/api/v1/matches/{marchId}",
         description: "Met à jour les informations d'un match.",
         requestBody: `{
   "status": "in_progress"
@@ -107,7 +107,7 @@ export const apiDocumentation: ApiSection[] = [
       {
         title: "Supprimer un match",
         method: "DELETE",
-        path: "/api/v1/matches/{id}",
+        path: "/api/v1/matches/{matchId}",
         description: "Supprime un match.",
         response: "Message de confirmation",
       },
@@ -120,14 +120,14 @@ export const apiDocumentation: ApiSection[] = [
       {
         title: "Liste des rounds d'un match",
         method: "GET",
-        path: "/api/v1/matches/{id}/rounds",
+        path: "/api/v1/matches/{matchId}/rounds",
         description: "Récupère tous les rounds d'un match spécifique.",
         response: "Tableau d'objets round",
       },
       {
         title: "Créer un round",
         method: "POST",
-        path: "/api/v1/matches/{id}/rounds",
+        path: "/api/v1/matches/{matchId}/rounds",
         description: "Crée un nouveau round pour le match {id}.",
         requestBody: `{
   "round_index": number,
@@ -138,14 +138,14 @@ export const apiDocumentation: ApiSection[] = [
       {
         title: "Détails d'un round",
         method: "GET",
-        path: "/api/v1/matches/{id}/rounds/{roundId}",
+        path: "/api/v1/matches/{matchId}/rounds/{roundId}",
         description: "Récupère les détails d'un round spécifique.",
         response: "Objet round",
       },
       {
         title: "Mettre à jour un round",
         method: "PATCH",
-        path: "/api/v1/matches/{id}/rounds/{roundId}",
+        path: "/api/v1/matches/{matchId}/rounds/{roundId}",
         description: "Met à jour les informations d'un round.",
         requestBody: `{
   "winner": "id-joueur-1",
@@ -163,6 +163,13 @@ export const apiDocumentation: ApiSection[] = [
   ]
 }`,
         response: "Objet round mis à jour",
+      },
+      {
+        title: "Liste des deck d'un round",
+        method: "GET",
+        path: "/api/v1/matches/{matchId}/rounds/{roundId}/decks",
+        description: "Récupère tous les rounds d'un match spécifique.",
+        response: "Tableau d'objets round",
       },
     ],
   },
