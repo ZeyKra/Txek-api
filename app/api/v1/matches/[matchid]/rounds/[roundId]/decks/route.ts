@@ -1,22 +1,24 @@
 import { NextResponse } from "next/server"
 import type { Match } from "@/app/types/match"
-import { getRoundInformations } from "@/app/backend/surreal-actions";
+import { getRoundDeckList, getRoundInformations } from "@/app/backend/surreal-actions";
 
 // Simulation d'une base de données
 const matches: Match[] = []
 
 export async function GET(request: Request, { params }: { params: { matchId: string; roundId: string } }) {
-  const { roundId } = await params;
+  const { matchId, roundId } = await params;
 
   // TODO: Check if match exist
-  const roundInformations = await getRoundInformations(roundId);
+  const deckList = await getRoundDeckList(roundId);
 
-  return NextResponse.json(roundInformations)
+  return NextResponse.json(deckList)
 }
 
 export async function PATCH(request: Request, { params }: { params: { matchId: string; roundId: string } }) {
   try {
     const roundData = await request.json()
+    const { matchId, roundId } = await params;
+    
     const matchIndex = matches.findIndex((m) => m.id === params.id)
 
     if (matchIndex === -1) {

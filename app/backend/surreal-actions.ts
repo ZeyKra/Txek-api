@@ -123,7 +123,12 @@ export async function generatePlayerListRecordId(playerList: string[]) {
     return playerListField
 }
 
-
+/**
+ * Relie une liste de joueurs à un round existant
+ * @param playerList - Array of player identifiers
+ * @param roundRecord - Round Record Id
+ * @returns
+ */
 export async function relatePlayerToRound(playerList: string[],roundRecord: string) {
     const db = await getSurrealClient()
 
@@ -242,6 +247,31 @@ export async function getMatchInformations(matchId: string) {
     }
 }
 
+/**
+ * Recuperer les informations d'un round
+ * @param roundId
+ * @returns
+ */
+export async function getRoundInformations(roundId: string) {
+    const db = await getSurrealClient()
+
+    try {
+        const roundInformations: SurrealResponse<any> = await db.query(`SELECT * FROM Round:${roundId};`)
+        db.close();
+        
+        return roundInformations[0][0] 
+    } catch(error) {
+        console.error("Failed to get round informations:", error)
+        throw new Error("Failed to get round informations")
+    }
+}
+
+/**
+ * Recuperer la liste des rounds d'un match
+ * @param matchId
+ * @returns
+ * 
+ */
 export async function getMatchRounds(matchId: string) {
     const db = await getSurrealClient()
     try {
@@ -251,6 +281,37 @@ export async function getMatchRounds(matchId: string) {
     } catch(error) {
         console.error("Failed to get match rounds:", error)
         throw new Error("Failed to get match rounds")
+    }
+}
+
+export async function getRoundDeckList(roundId: string) {
+    const db = await getSurrealClient()
+    try {
+        const onlinePlayerData: SurrealResponse<any> = await db.query(`SELECT in as player, deck FROM Round:${roundId}<-plays_in_round;`)
+        const localPlayerData: SurrealResponse<any> = await db.query(`SELECT * FROM Round:${roundId}->belongs_to_match;`)
+        db.close()
+
+        let deckList: { [key: string]: any } = {} 
+
+        // Formatage pour les joueurs locaux
+        if(localPlayerData[0][0].local_player.length > 0) {        
+            localPlayerData[0][0].local_player.map((localPlayer: any) => {
+                deckList[localPlayer] = localPlayerData[0][0][`deck_${localPlayer}`]
+            })
+        }
+
+        // Formatage pour les joueurs en ligne
+        if(onlinePlayerData[0].length > 0) {
+            onlinePlayerData[0].map((onlinePlayer: any) => {
+                deckList[onlinePlayer.player] = onlinePlayer.deck
+            }) 
+        }
+
+        return deckList
+
+    } catch(error) {
+        console.error("Failed to get round deck list:", error)
+        throw new Error("Failed to get round deck list")
     }
 }
 

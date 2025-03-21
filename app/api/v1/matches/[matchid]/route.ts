@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import type { Match } from "@/app/types/match"
-import { getMatchRounds } from "@/app/backend/surreal-actions";
+import { getMatchInformations, getMatchRounds } from "@/app/backend/surreal-actions";
 
 // Simulation d'une base de données
 const matches: Match[] = []
@@ -12,7 +12,9 @@ export async function GET(request: Request, { params }: { params: { matchId: str
     return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })
   }
 
-  return NextResponse.json(matchId)
+  const matchInformations = await getMatchInformations(matchId);
+
+  return NextResponse.json(matchInformations)
 }
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
