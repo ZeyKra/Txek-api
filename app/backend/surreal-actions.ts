@@ -242,6 +242,18 @@ export async function getMatchInformations(matchId: string) {
     }
 }
 
+export async function getMatchRounds(matchId: string) {
+    const db = await getSurrealClient()
+    try {
+        const roundList: SurrealResponse<any> = await db.query(`SELECT *, round_index FROM Match:${matchId}<-belongs_to_match<-Round ORDER BY round_index ASC FETCH Round;`)
+        db.close()
+        return roundList[0]
+    } catch(error) {
+        console.error("Failed to get match rounds:", error)
+        throw new Error("Failed to get match rounds")
+    }
+}
+
 // TODO : Match exist ?
 export async function doesMatchExist(matchId: string, matchData: Match) {
     const db = await getSurrealClient()

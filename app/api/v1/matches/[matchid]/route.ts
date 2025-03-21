@@ -1,17 +1,18 @@
 import { NextResponse } from "next/server"
 import type { Match } from "@/app/types/match"
+import { getMatchRounds } from "@/app/backend/surreal-actions";
 
 // Simulation d'une base de données
 const matches: Match[] = []
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const match = matches.find((m) => m.id === params.id)
+export async function GET(request: Request, { params }: { params: { matchid: string } }) {
+  const matchId = await params.matchid;
 
-  if (!match) {
+  if (!matchId) {
     return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })
   }
 
-  return NextResponse.json(match)
+  return NextResponse.json(matchId)
 }
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
