@@ -82,7 +82,8 @@ export const apiDocumentation: ApiSection[] = [
         description: "Crée un nouveau match.",
         requestBody: `{
   "local_player": ["Joueur1", "Joueur2"],
-  "owner": "Player:<id>"
+  "owner": "Player:<id>",
+  "round_max": number
 }`,
         response: "Objet match créé",
       },
@@ -129,7 +130,8 @@ export const apiDocumentation: ApiSection[] = [
         path: "/api/v1/matches/{id}/rounds",
         description: "Crée un nouveau round pour le match {id}.",
         requestBody: `{
-  "round_index": number
+  "round_index": number,
+  "player": ["Player:<i>"]
 }`,
         response: "Objet round créé",
       },
