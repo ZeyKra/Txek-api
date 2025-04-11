@@ -36,8 +36,7 @@ export async function POST(request: Request) {
     const newMatch: Match = {
       completed_at: new Date(),
       created_at: new Date(),
-      local_player: requestData.local_player, // IDs des utilisateurs
-      owner: new StringRecordId(requestData.owner), // ID de l'utilisateur TODO: Ajouter l'owner
+      players: requestData.players, // IDs des utilisateurs
       status: "created",
       round_max: requestData.round_max,
       winner: undefined // ID de l'utilisateur gagnant

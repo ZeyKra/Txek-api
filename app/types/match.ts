@@ -7,7 +7,6 @@ export interface Match {
   completed_at?: Date,
   created_at?: Date,
   players: string[] // IDs des utilisateurs
-  owner: StringRecordId, // ID de l'utilisateur
   status: MatchStatus,
   round_max: number,
   winner: string | undefined // ID de l'utilisateur gagnant

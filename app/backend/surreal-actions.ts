@@ -52,7 +52,7 @@ export async function getSurrealClient() {
  * @param userId 
  * @returns 
  */
-export async function getDatabaseUserInformations(userId: string) {
+export async function getUserInformations(userId: string) {
     const db = await getSurrealClient()
 
     try {
@@ -70,7 +70,7 @@ export async function getDatabaseUserInformations(userId: string) {
  * @param userData 
  * @returns 
  */
-export async function createPlayer(userData: User) {
+export async function createUser(userData: User) {
     const db = await getSurrealClient()
 
     try {
