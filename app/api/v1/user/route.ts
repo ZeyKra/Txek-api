@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server"
-import type { Player } from "@/app/types/player"
+import type { User } from "@/app/types/User"
 import { createPlayer } from "@/app/backend/surreal-actions"
 import { createStatisticsProfile, createStatisticsRelation } from "@/app/backend/surreal-statistics"
 
 // Simulation d'une base de données
-const users: Player[] = []
+// TODO : Mettre l'endpoint au pluriel
+const users: User[] = []
 
 export async function GET() {
   return NextResponse.json(users)
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Le nom d'utilisateur est requis" }, { status: 400 })
     }
 
-    const playerData: Player = {
+    const playerData: User = {
       username: requestData.username,
       created_at: new Date()
     }

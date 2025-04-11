@@ -14,10 +14,9 @@ export async function GET(request: Request, { params }: { params: { matchId: str
   if (!matchId) {
     return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })
   }
-  
+
   const matchRounds = await getMatchRounds(matchId);
   
-
   return NextResponse.json(matchRounds)
 }
 

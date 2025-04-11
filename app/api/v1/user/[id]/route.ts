@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server"
-import type { Player } from "@/app/types/player"
-import { getDatabasePlayerInformations } from "@/app/backend/surreal-actions"
+import type { User } from "@/app/types/User"
+import { getDatabaseUserInformations } from "@/app/backend/surreal-actions"
 // Simulation d'une base de données
-const users: Player[] = []
+const users: User[] = []
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   try {
-    const playersInformations = await getDatabasePlayerInformations(id)
+    const playersInformations = await getDatabaseUserInformations(id)
 
     if (!playersInformations) {
       return NextResponse.json({ error: "Player non trouvé" }, { status: 404 })

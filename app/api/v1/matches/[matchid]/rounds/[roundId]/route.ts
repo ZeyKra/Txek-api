@@ -17,6 +17,8 @@ export async function GET(request: Request, { params }: { params: { matchId: str
 export async function PATCH(request: Request, { params }: { params: { matchId: string; roundId: string } }) {
   try {
     const roundData = await request.json()
+    const { matchId, roundId } = await params;
+    
     const matchIndex = matches.findIndex((m) => m.id === params.id)
 
     if (matchIndex === -1) {

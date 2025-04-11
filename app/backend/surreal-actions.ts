@@ -1,5 +1,5 @@
 import Surreal, { StringRecordId } from "surrealdb"
-import { Player } from "@/app/types/player"
+import { User } from "@/app/types/User"
 import { SurrealResponse } from "@/app/types/surreal-response"
 import { Round } from "@/app/types/round"
 import { Match } from "@/app/types/match"
@@ -48,38 +48,38 @@ export async function getSurrealClient() {
 }
   
 /**
- * Recuperer les informations d'un Joueur
- * @param playerId 
+ * Recuperer les informations d'un User
+ * @param userId 
  * @returns 
  */
-export async function getDatabasePlayerInformations(playerId: string) {
+export async function getDatabaseUserInformations(userId: string) {
     const db = await getSurrealClient()
 
     try {
-        const playersInformations: SurrealResponse<any> = await db.query(`SELECT * FROM Player:${playerId};`)
+        const userInformations: SurrealResponse<any> = await db.query(`SELECT * FROM User:${userId};`)
         db.close();
-        return playersInformations[0][0]
+        return userInformations[0][0]
     } catch(error) {
-        console.error("Failed to get player informations:", error)
-        throw new Error("Failed to get player informations")
+        console.error("Failed to get user informations:", error)
+        throw new Error("Failed to get user informations")
     } 
 }
 
 /**
  * Creer un joueur dans la base de données
- * @param playerId 
+ * @param userData 
  * @returns 
  */
-export async function createPlayer(playerData: Player) {
+export async function createPlayer(userData: User) {
     const db = await getSurrealClient()
 
     try {
-        const playerCreation: SurrealResponse<any> = await db.query(`CREATE ONLY Player CONTENT $item`, {item: playerData})
+        const userCreation: SurrealResponse<any> = await db.query(`CREATE ONLY User CONTENT $item`, {item: userData})
         db.close();
-        return playerCreation[0]
+        return userCreation[0]
     } catch(error) {
-        console.error("Failed to create player ", error)
-        throw new Error("Failed to get player")
+        console.error("Failed to create user ", error)
+        throw new Error("Failed to get user")
     } 
 }
 
@@ -156,7 +156,6 @@ export async function relatePlayerToRound(playerList: string[],roundRecord: stri
  * @returns Les données du round créé
  * @throws {Error} Si la création du round ou la relation échoue
  */
-
 export async function createRound(roundData: Round) {
     const db = await getSurrealClient()
 
@@ -284,6 +283,11 @@ export async function getMatchRounds(matchId: string) {
     }
 }
 
+/**
+ * Recuperer la liste des decks d'un round
+ * @param roundId
+ * @returns
+ */
 export async function getRoundDeckList(roundId: string) {
     const db = await getSurrealClient()
     try {
@@ -312,6 +316,44 @@ export async function getRoundDeckList(roundId: string) {
     } catch(error) {
         console.error("Failed to get round deck list:", error)
         throw new Error("Failed to get round deck list")
+    }
+}
+
+/**
+ * Modifie le deck d'un joueur local
+ * @param playerName
+ * @param cardId
+ * @returns
+ */
+export async function updateLocalPlayerDeckInRound(playerName: string, roundId: string, matchId: string) {
+    const db = await getSurrealClient()
+
+    try {
+        const result = await db.query(`UPDATE Player:${playerName} SET deck = $deck`, {deck: []})
+        db.close();
+        return result 
+    } catch(error) {
+        console.error("Failed to update local player deck:", error)
+        throw new Error("Failed to update local player deck")
+    }
+}
+
+/**
+ * Modifie le deck d'un joueur en ligne (a la relation)
+ * @param playerId
+ * @param cardId
+ * @returns
+ */ 
+export async function updateOnlinePlayerDeckInRound(playerId: string, roundId: string) {
+    const db = await getSurrealClient()
+
+    try {
+        const result = await db.query(`UPDATE Player:${playerId} SET deck = $deck`, {deck: []})
+        db.close();
+        return result 
+    } catch(error) {
+        console.error("Failed to update player deck:", error)
+        throw new Error("Failed to update player deck")
     }
 }
 
