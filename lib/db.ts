@@ -17,7 +17,7 @@ export async function connectToDatabase() {
     
     await db.use({
       namespace: process.env.SURREALDB_NAMESPACE || 'test',
-      database: process.env.SURREALDB_DATABASE || 'test',
+      database: process.env.SURREALDB_AUTH_DATABASE || 'test',
     });
     
     console.log('Connected to SurrealDB');
