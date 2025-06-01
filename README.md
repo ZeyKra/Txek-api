@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js API with Auth.js and SurrealDB
+
+This is a backend-only API project built with Next.js (App Router), Auth.js v5.0.0, and SurrealDB. It provides JWT-based authentication for protected API routes.
+
+## Features
+
+- Next.js App Router with TypeScript
+- Auth.js v5.0.0 integration
+- SurrealDB database integration
+- JWT-based authentication
+- Protected API routes
+- Middleware for route protection
+
+## Prerequisites
+
+- Node.js 18.x or later
+- SurrealDB installed and running
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Set up environment variables
+
+Copy the `.env.example` file to `.env` and update the values:
+
+```bash
+cp .env.example .env
+```
+
+Update the following variables in the `.env` file:
+
+```
+# Auth.js Configuration
+AUTH_SECRET=your-auth-secret-key-here
+AUTH_URL=http://localhost:3000
+
+# SurrealDB Configuration
+SURREALDB_URL=http://localhost:8000
+SURREALDB_NAMESPACE=test
+SURREALDB_DATABASE=test
+SURREALDB_USERNAME=root
+SURREALDB_PASSWORD=root
+
+# JWT Configuration
+JWT_SECRET=your-jwt-secret-key-here
+JWT_EXPIRATION=86400 # 24 hours in seconds
+```
+
+### 4. Start SurrealDB
+
+Start SurrealDB with the following command:
+
+```bash
+surreal start --log debug --user root --pass root memory
+```
+
+### 5. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The API will be available at http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API Endpoints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Authentication
 
-## Learn More
+- **POST /api/auth/token**
+  - Request body: `{ "email": "user@example.com", "password": "password123" }`
+  - Response: `{ "token": "jwt-token-here" }`
 
-To learn more about Next.js, take a look at the following resources:
+### Protected Routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **GET /api/protected/data**
+  - Headers: `Authorization: Bearer <jwt-token>`
+  - Response: Protected data
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Health Check
 
-## Deploy on Vercel
+- **GET /api/health**
+  - Response: `{ "status": "ok", "timestamp": "2023-06-01T12:00:00.000Z", "version": "1.0.0" }`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Adding Users to SurrealDB
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To add a user to the database, you can use the SurrealDB CLI or any SurrealDB client. Here's an example using the SurrealDB CLI:
+
+```sql
+CREATE user:user1 CONTENT {
+  email: "user@example.com",
+  password: crypto::argon2::generate("password123"),
+  name: "Test User",
+  role: "user"
+};
+```
+
+## Authentication Flow
+
+1. Client sends credentials to `/api/auth/token`
+2. Server validates credentials against SurrealDB
+3. If valid, server generates a JWT and returns it
+4. Client includes the JWT in the `Authorization` header for protected routes
+5. Middleware validates the JWT for all routes under `/api/protected/*`
+
+## License
+
+MIT
