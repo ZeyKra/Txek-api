@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import type { Match } from "@/app/types/match"
+import type { Match } from "@/types/match"
 import { getRoundInformations } from "@/app/backend/surreal-actions";
 
 // Simulation d'une base de données
@@ -9,7 +9,7 @@ export async function GET(request: Request, { params }: { params: { matchId: str
   const { roundId } = await params;
 
   // TODO: Check if match exist
-  const roundInformations = await getRoundInformations(roundId);
+  const roundInformations = await getRoundInformations(`Round:${roundId}`);
 
   return NextResponse.json(roundInformations)
 }

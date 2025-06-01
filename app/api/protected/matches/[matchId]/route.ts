@@ -13,23 +13,6 @@ export async function GET(request: Request, { params }: { params: { matchId: str
   return NextResponse.json(matchInformations)
 }
 
-export async function POST(request: Request, { params }: { params: { matchId: string } }) {
-  const matchId = await params.matchId;
-  const requestData = await request.json();
-
-  await console.log(requestData);
-
-  if(!requestData.players || requestData.players.length !== 2) {
-    return NextResponse.json({ error: "Un match doit avoir deux joueurs" }, { status: 400 })
-  }
-
-  
-
-  //const roundInformations = await createRound(`Match:${matchId}`, requestData.players);
-
-  return NextResponse.json("roundInformations")
-}
-
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
     const matchData = await request.json()

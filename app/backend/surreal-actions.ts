@@ -268,10 +268,10 @@ export async function getRoundInformations(roundId: string) {
     const db = await getSurrealClient()
 
     try {
-        const roundInformations: SurrealResponse<any> = await db.query(`SELECT * FROM Round:${roundId};`)
+        const roundInformations: SurrealResponse<any> = await db.query(`SELECT * FROM ${roundId};`)
         db.close();
         
-        return roundInformations[0][0] 
+        return roundInformations[0]
     } catch(error) {
         console.error("Failed to get round informations:", error)
         throw new Error("Failed to get round informations")
