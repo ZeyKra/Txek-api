@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import type { Match } from "@/app/types/match"
-import { getMatchInformations, getMatchRounds } from "@/app/backend/surreal-actions";
+import type { Match } from "@/types/match"
+import { createRound, getMatchInformations, getMatchRounds } from "@/app/backend/surreal-actions";
 
 // Simulation d'une base de données
 const matches: Match[] = []
@@ -8,13 +8,26 @@ const matches: Match[] = []
 export async function GET(request: Request, { params }: { params: { matchId: string } }) {
   const matchId = await params.matchId;
 
-  if (!matchId) {
-    return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })
-  }
-
   const matchInformations = await getMatchInformations(matchId);
 
   return NextResponse.json(matchInformations)
+}
+
+export async function POST(request: Request, { params }: { params: { matchId: string } }) {
+  const matchId = await params.matchId;
+  const requestData = await request.json();
+
+  await console.log(requestData);
+
+  if(!requestData.players || requestData.players.length !== 2) {
+    return NextResponse.json({ error: "Un match doit avoir deux joueurs" }, { status: 400 })
+  }
+
+  
+
+  //const roundInformations = await createRound(`Match:${matchId}`, requestData.players);
+
+  return NextResponse.json("roundInformations")
 }
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {

@@ -164,14 +164,20 @@ export async function relatePlayerToRound(playerList: string[],roundRecord: stri
  * @returns Les données du round créé
  * @throws {Error} Si la création du round ou la relation échoue
  */
-export async function createRound(roundData: Round) {
+export async function createRound(roundData: Round, players: string[]) {
     const db = await getSurrealClient()
 
     try {
 
-        const roundCreationData: SurrealResponse<any> = await db.query(`CREATE ONLY Round CONTENT $item`, {item: roundData})
+        const finalRoundData: Round = {
+            ...roundData,
+        }
+        players.map((player: string) => {
+            Object.assign(finalRoundData, { [player]: [] })
+        })
+
+        const roundCreationData: SurrealResponse<any> = await db.query(`CREATE ONLY Round CONTENT $item`, {item: finalRoundData})
         
-        //const relationCreattion: SurrealResponse<any> = await db.query(`RELATE Round:${roundCreationData[0][0].id}->belongs_to_match->Match:${matchId} `)
         db.close();
         return roundCreationData[0]
     } catch(error) {
@@ -187,12 +193,11 @@ export async function createRound(roundData: Round) {
  * @returns Les données de la relation créée
  * @throws {Error} Si la relation échoue
  */
-export async function relateUserToRound(roundId: string, matchId: string) {
+export async function relateRoundToMatch(roundId: string, matchId: string) {
     const db = await getSurrealClient()
 
     try {
-        const roundRelationContent = await generateRoundRelationContent(matchId)
-        const relationCreation: SurrealResponse<any> = await db.query(`RELATE ${roundId}->belongs_to_match->Match:${matchId} CONTENT $item`, {item: roundRelationContent})
+        const relationCreation: SurrealResponse<any> = await db.query(`RELATE ${matchId}->match_has_round->${roundId}`)
         db.close();
         return relationCreation[0]
     } catch(error) {
@@ -282,7 +287,7 @@ export async function getRoundInformations(roundId: string) {
 export async function getMatchRounds(matchId: string) {
     const db = await getSurrealClient()
     try {
-        const roundList: SurrealResponse<any> = await db.query(`SELECT *, round_index FROM Match:${matchId}<-belongs_to_match<-Round ORDER BY round_index ASC FETCH Round;`)
+        const roundList: SurrealResponse<any> = await db.query(`SELECT *, round_index FROM ${matchId}->match_has_round->Round ORDER BY round_index ASC FETCH Round;`)
         db.close()
         return roundList[0]
     } catch(error) {
@@ -343,25 +348,6 @@ export async function updateLocalPlayerDeckInRound(playerName: string, roundId: 
     } catch(error) {
         console.error("Failed to update local player deck:", error)
         throw new Error("Failed to update local player deck")
-    }
-}
-
-/**
- * Modifie le deck d'un joueur en ligne (a la relation)
- * @param playerId
- * @param cardId
- * @returns
- */ 
-export async function updateOnlinePlayerDeckInRound(playerId: string, roundId: string) {
-    const db = await getSurrealClient()
-
-    try {
-        const result = await db.query(`UPDATE Player:${playerId} SET deck = $deck`, {deck: []})
-        db.close();
-        return result 
-    } catch(error) {
-        console.error("Failed to update player deck:", error)
-        throw new Error("Failed to update player deck")
     }
 }
 

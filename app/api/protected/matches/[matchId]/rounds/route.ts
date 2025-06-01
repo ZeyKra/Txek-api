@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server"
-import type { Round } from "@/app/types/round"
-import type { Match } from "@/app/types/match"
-import { createRound, getMatchRounds, getSurrealClient, relatePlayerToRound, relateRoundToMatch } from "@/app/backend/surreal-actions"
-import { match } from "assert"
+import type { Round } from "@/types/round"
+import type { Match } from "@/types/match"
+import { createRound, getMatchRounds, getSurrealClient, relateRoundToMatch } from "@/app/backend/surreal-actions"
 
 // Simulation d'une base de données
 const matches: Match[] = []
@@ -15,13 +14,13 @@ export async function GET(request: Request, { params }: { params: { matchId: str
     return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })
   }
 
-  const matchRounds = await getMatchRounds(matchId);
+  const matchRounds = await getMatchRounds(`Match:${matchId}`);
   
   return NextResponse.json(matchRounds)
 }
 
 //create round
-export async function POST(request: Request, { params }: { params: { matchId: string, round_index: number } }) {
+export async function POST(request: Request, { params }: { params: { matchId: string } }) {
   try {
 
     const { matchId } = await params;
@@ -29,6 +28,9 @@ export async function POST(request: Request, { params }: { params: { matchId: st
     const db = await getSurrealClient();
 
     //console.log(requestData, matchid); // DEBUG
+    if(!requestData.players || requestData.players.length !== 2) {
+      return NextResponse.json({ error: "Un match doit avoir 2 joueurs" }, { status: 400 })
+    }
     
     const newRoundData: Round = {
       created_at: new Date(),
@@ -36,13 +38,9 @@ export async function POST(request: Request, { params }: { params: { matchId: st
       winner: requestData.winner || undefined,
     }
 
-    // Data srtucture 'Round:<id>'
-    let roundCreationData = await createRound(newRoundData);
+    let roundCreationData = await createRound(newRoundData, requestData.players);
     
-    await relateRoundToMatch(roundCreationData.id, matchId);
-    await relatePlayerToRound(requestData.player, roundCreationData.id)
-    //console.log(relateRoundToMatchData); // DEBUG 
-    
+    await relateRoundToMatch(`${roundCreationData.id.tb}:${roundCreationData.id.id}`, `Match:${matchId}`);
 
     return NextResponse.json(roundCreationData, { status: 201 })
   } catch (error) {
