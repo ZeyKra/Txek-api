@@ -1,0 +1,15 @@
+meta {
+  name: Match Information
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/protected/matches/{{matchid}}/
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: 
+}

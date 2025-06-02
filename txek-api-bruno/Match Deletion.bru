@@ -1,0 +1,19 @@
+meta {
+  name: Match Deletion
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{baseUrl}}/api/protected/matches/{{matchid}}
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOnsidGIiOiJ1c2VyIiwiaWQiOiJ0ZXN0X3VzZXIifSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwibmFtZSI6IlRlc3QgVXNlciIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ4ODE1ODI4LCJleHAiOjE3NDg5MDIyMjh9.sVltbDg-nKOHdmlcZWA_5J2tm4mGU5XgpZ6yBE3vJDg
+}
