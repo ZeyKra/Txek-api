@@ -5,6 +5,14 @@ import { createRound, deleteMatch, getMatchInformations, getMatchRounds } from "
 // Simulation d'une base de données
 const matches: Match[] = []
 
+/**
+ * GET /api/protected/matches/{matchId}
+ * 
+ * Récuperation des informations d'un match
+ * @param matchData
+ * @returns
+ * 
+ */
 export async function GET(request: Request, { params }: { params: { matchId: string } }) {
   const matchId = await params.matchId;
 
@@ -13,6 +21,14 @@ export async function GET(request: Request, { params }: { params: { matchId: str
   return NextResponse.json(matchInformations)
 }
 
+/**
+ * PATCH /api/protected/matches/{matchId}
+ * //TODO
+ * Modification d'un match
+ * @param matchData
+ * @returns
+ * 
+ */
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
     const matchData = await request.json()
@@ -34,6 +50,14 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
+/**
+ * DELETE /api/protected/matches/{matchId}
+ * 
+ * Suppression d'un match et tout ses rounds
+ * @param matchData
+ * @returns
+ * 
+ */
 export async function DELETE(request: Request, { params }: { params: { matchId: string } }) {
   const { matchId } = await params;
 
