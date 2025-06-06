@@ -187,6 +187,26 @@ export async function createRound(roundData: Round, players: string[]) {
 }
 
 /**
+ * Supprime le round
+ * @param matchId - L'identifiant record du round
+ * @returns Message de confirmation
+ * @throws {Error} Si la suppresion du round échoue
+ */
+export async function deleteRound(roundId: string) {
+    const db = await getSurrealClient()
+
+    try {
+        await db.query(`DELETE ${roundId}`)
+        
+        db.close();
+        return Response.json({ message: "Round supprimé" })
+    } catch(error) {
+        console.error("Failed to delete Round:", error)
+        throw new Error("Failed to delete Round")
+    } 
+}
+
+/**
  * Relie un round à un match existant
  * @param roundId - L'identifiant du round à relier
  * @param matchId - L'identifiant du match auquel le round sera relié

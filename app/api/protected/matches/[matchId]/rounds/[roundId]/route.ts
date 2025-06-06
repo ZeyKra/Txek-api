@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server"
-import type { Match } from "@/types/match"
-import { getRoundInformations } from "@/app/backend/surreal-actions";
+import { deleteRound, getRoundInformations } from "@/app/backend/surreal-actions";
 
-// Simulation d'une base de données
-const matches: Match[] = []
-
+/**
+ * GET /api/protected/matches/{matchId}/rounds/{roundId}
+ * 
+ * Récupération des informations d'un round
+ * @param matchData
+ * @returns
+ * 
+ */
 export async function GET(request: Request, { params }: { params: { matchId: string; roundId: string } }) {
   const { roundId } = await params;
 
@@ -14,6 +18,14 @@ export async function GET(request: Request, { params }: { params: { matchId: str
   return NextResponse.json(roundInformations)
 }
 
+/**
+ * Modification /api/protected/matches/{matchId}/rounds/{roundId}
+ * 
+ * Modifier les informations d'un round
+ * @param matchData
+ * @returns
+ * 
+ */
 export async function PATCH(request: Request, { params }: { params: { matchId: string; roundId: string } }) {
   try {
     const roundData = await request.json()
@@ -41,5 +53,22 @@ export async function PATCH(request: Request, { params }: { params: { matchId: s
   } catch (error) {
     return NextResponse.json({ error: "Erreur lors de la mise à jour du round" }, { status: 500 })
   }
+}
+
+/**
+ * DELETE /api/protected/matches/{matchId}/rounds/{roundId}
+ * 
+ * Suppréssion d'un round
+ * @param matchData
+ * @returns
+ * 
+ */
+export async function DELETE(request: Request, { params }: { params: { matchId: string; roundId: string } }) {
+  const { roundId } = await params;
+
+  // TODO: Check if match exist
+  const roundInformations = await deleteRound(`Round:${roundId}`);
+
+  return NextResponse.json(roundInformations)
 }
 
