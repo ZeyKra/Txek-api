@@ -1,13 +1,13 @@
 meta {
   name: Auth Test
   type: http
-  seq: 11
+  seq: 12
 }
 
 post {
   url: {{baseUrl}}/api/auth/token
   body: json
-  auth: bearer
+  auth: none
 }
 
 body:json {

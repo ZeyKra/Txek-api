@@ -1,0 +1,19 @@
+meta {
+  name: Round Deletion
+  type: http
+  seq: 11
+}
+
+delete {
+  url: {{baseUrl}}/api/protected/matches/{{matchid}}/rounds/{{roundid}}
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOnsidGIiOiJ1c2VyIiwiaWQiOiJ0ZXN0X3VzZXIifSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwibmFtZSI6IlRlc3QgVXNlciIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ5MjA2NjA2LCJleHAiOjE3NDkyOTMwMDZ9.oY9X-fEXaxFjiWwzyjwrsXaMiuNLs_V1DOZhGdWy0vs
+}
