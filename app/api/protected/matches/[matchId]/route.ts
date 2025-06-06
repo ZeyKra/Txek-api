@@ -29,24 +29,16 @@ export async function GET(request: Request, { params }: { params: { matchId: str
  * @returns
  * 
  */
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: { matchId: string; } }) {
   try {
-    const matchData = await request.json()
-    const index = matches.findIndex((m) => m.id === params.id)
+    const updateData = await request.json()
+    const { matchId } = await params;
 
-    if (index === -1) {
-      return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })
-    }
-
-    matches[index] = {
-      ...matches[index],
-      ...matchData,
-      id: params.id, // Assurer que l'ID ne change pas
-    }
-
-    return NextResponse.json(matches[index])
+    // TODO: Check if match exist
+    const updateInformations = await updateMatchInformations(`Match:${roundId}`, updateData);
+    return NextResponse.json(updateInformations)
   } catch (error) {
-    return NextResponse.json({ error: "Erreur lors de la mise à jour du match" }, { status: 500 })
+    return NextResponse.json({ error: "Erreur lors de la mise à jour du round" }, { status: 500 })
   }
 }
 

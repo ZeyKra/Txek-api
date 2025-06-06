@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   return NextResponse.json({
-    name: 'Next.js API with Auth.js and SurrealDB',
+    name: 'Api Txek',
     version: '1.0.0',
-    description: 'Backend-only API with JWT authentication',
+    description: 'API backend uniquement avec authentification JWT',
     endpoints: {
       auth: '/api/auth/token',
       protected: '/api/protected/*',

@@ -49,12 +49,30 @@ export async function getUserInformations(userId: string) {
     const db = await getSurrealClient()
 
     try {
-        const userInformations: SurrealResponse<any> = await db.query(`SELECT * FROM User:${userId};`)
+        const userInformations: SurrealResponse<any> = await db.query(`SELECT * FROM RecordedUser:${userId};`)
         db.close();
         return userInformations[0][0]
     } catch(error) {
         console.error("Failed to get user informations:", error)
         throw new Error("Failed to get user informations")
+    } 
+}
+
+/**
+ * Recuperer les informations d'un User
+ * @param userId 
+ * @returns 
+ */
+export async function getUserMatchHistory(userId: string) {
+    const db = await getSurrealClient()
+
+    try {
+        const matchHistoryInformations: SurrealResponse<any> = await db.query(`SELECT *, created_at FROM ${userId}->recordeduser_recorded_match->Match ORDER BY created_at DESC FETCH Match;`)
+        db.close();
+        return matchHistoryInformations[0]
+    } catch(error) {
+        console.error("Failed to get user Match History:", error)
+        throw new Error("Failed to get user Match History")
     } 
 }
 
