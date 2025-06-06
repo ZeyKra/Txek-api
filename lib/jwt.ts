@@ -1,4 +1,5 @@
-export const runtime = 'edge';import * as jose from 'jose';
+import * as jose from 'jose';
+export const runtime = 'edge';
 
 interface JWTPayload {
   userId: string;

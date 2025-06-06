@@ -25,7 +25,6 @@ export async function POST(request: Request, { params }: { params: { matchId: st
 
     const { matchId } = await params;
     const requestData = await request.json()
-    const db = await getSurrealClient();
 
     //console.log(requestData, matchid); // DEBUG
     if(!requestData.players || requestData.players.length !== 2) {
@@ -34,6 +33,7 @@ export async function POST(request: Request, { params }: { params: { matchId: st
     
     const newRoundData: Round = {
       created_at: new Date(),
+      status: "in_progress",
       round_index: requestData.round_index,  
       winner: requestData.winner || undefined,
     }

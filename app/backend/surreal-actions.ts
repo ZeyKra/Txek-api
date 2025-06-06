@@ -188,7 +188,7 @@ export async function createRound(roundData: Round, players: string[]) {
 
 /**
  * Supprime le round
- * @param matchId - L'identifiant record du round
+ * @param roundId - L'identifiant record du round
  * @returns Message de confirmation
  * @throws {Error} Si la suppresion du round échoue
  */
@@ -227,38 +227,24 @@ export async function relateRoundToMatch(roundId: string, matchId: string) {
 }
 
 /**
- * Génère le contenu de la relation entre un round et un match
- * @param matchId - L'identifiant du match auquel le round sera relié
- * @returns Le contenu de la relation
- * @throws {Error} Si la génération du contenu de la relation échoue
+ * Modifier les informations d'un round
+ * @param roundId - L'identifiant record du round
+ * @returns Message de confirmation
+ * @throws {Error} Si la suppresion du round échoue
  */
-export async function generateRoundRelationContent(matchId: string) {
-    const db = await getSurrealClient();
+export async function updateRoundInformations(roundId: string, updateInformations: string) {
+    const db = await getSurrealClient()
 
     try {
-        const matchInformations = await getMatchInformations(matchId);
+        let roundUpdateInformations: SurrealResponse<any> = 
+        await db.query(`UPDATE ${roundId} MERGE $content`, {content: updateInformations});
 
-        //console.log("matchInformations:", matchInformations); // DEBUG
-        
-        const roundRelationContent: any = {
-            local_player: matchInformations.local_player
-        }
-        
-        if(matchInformations.local_player.length > 0) {
-            matchInformations.local_player.map((localPlayer : string) => {
-                roundRelationContent[`deck_${localPlayer}`] = []
-            })
-        }
-
-        //console.log("roundRelationContent:", roundRelationContent); // DEBUG
-        
         db.close();
-        return roundRelationContent 
+        return roundUpdateInformations[0][0] 
     } catch(error) {
-        console.error("Failed to generate round relation cotent:", error)
-        throw new Error("Failed to generate round relation content")
-    }
-    
+        console.error("Failed to delete Round:", error)
+        throw new Error("Failed to delete Round")
+    } 
 }
 
 /**

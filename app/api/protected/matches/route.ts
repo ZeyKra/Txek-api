@@ -15,9 +15,6 @@ export async function POST(request: Request) {
     const requestData = await request.json()
     
     //Validation basique
-    if (!requestData.owner_id) {
-       return NextResponse.json({ error: "Un match doit avoir un Proprietaire" }, { status: 400 })
-    }
 
     const newMatch: Match = {
       completed_at: new Date(),
@@ -31,7 +28,7 @@ export async function POST(request: Request) {
     
     //relateRecordedUserToMatch(requestData.owner_id, `${matchCreationData.id.tb}:${matchCreationData.id.id}`);
     
-    await relateRecordedUserToMatch(requestData.owner_id, `${matchCreationData.id.tb}:${matchCreationData.id.id}`)
+    await relateRecordedUserToMatch(requestData.owner_id, `${matchCreationData[0].id.tb}:${matchCreationData[0].id.id}`)
     return NextResponse.json(matchCreationData, { status: 201 })
   } catch (error) {
     console.error(error)
