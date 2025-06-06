@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import type { Match } from "@/types/match"
-import { createRound, getMatchInformations, getMatchRounds } from "@/app/backend/surreal-actions";
+import { createRound, deleteMatch, getMatchInformations, getMatchRounds } from "@/app/backend/surreal-actions";
 
 // Simulation d'une base de données
 const matches: Match[] = []
@@ -34,14 +34,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const index = matches.findIndex((m) => m.id === params.id)
+export async function DELETE(request: Request, { params }: { params: { matchId: string } }) {
+  const { matchId } = await params;
 
-  if (index === -1) {
-    return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })
-  }
-
-  matches.splice(index, 1)
+  deleteMatch(`Match:${matchId}`);
 
   return NextResponse.json({ message: "Match supprimé avec succès" })
 }

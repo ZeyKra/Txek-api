@@ -279,6 +279,25 @@ export async function getRoundInformations(roundId: string) {
 }
 
 /**
+ * Suppresion d'un match et ses round liés
+ * @param matchId
+ * @returns
+ */
+export async function deleteMatch(matchId: string) {
+    const db = await getSurrealClient()
+
+    try {   
+        const deletionInformations: SurrealResponse<any> = await db.query(`DELETE (SELECT VALUE <set><->match_has_round<->Round FROM ONLY ${matchId});`)
+        await db.query(`DELETE ${matchId}`)
+        db.close();
+        return deletionInformations[0][0]   
+    } catch(error) {
+        console.error("Failed to delete match", error)
+        throw new Error("Failed to delete match")
+    }
+}
+
+/**
  * Recuperer la liste des rounds d'un match
  * @param matchId
  * @returns

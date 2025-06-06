@@ -1,20 +1,9 @@
 import { NextResponse } from "next/server"
 import type { Match } from "@/types/match"
-import { createMatch, relatePlayerToRound, relateRecordedUserToMatch } from "@/app/backend/surreal-actions"
+import { createMatch, relateRecordedUserToMatch } from "@/app/backend/surreal-actions"
 import { SurrealResponse } from "@/types/surreal-response"
-import { RecordId, StringRecordId } from "surrealdb"
 
 // Simulation d'une base de données
-const matches: Match[] = []
-
-/**
- * Récupère tous les matchs //TODO: Je ferais surement pas
- * @returns
- */
-export async function GET() {
-  return NextResponse.json(matches)
-}
-
 
 /**
  * Creer un match dans la base de données

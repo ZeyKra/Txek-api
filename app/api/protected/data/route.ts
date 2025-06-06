@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { StringRecordId } from 'surrealdb';
 
 export async function GET(request: NextRequest) {
   // The middleware has already verified the JWT token
