@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server"
-import type { Match } from "@/types/match"
-import { createRound, deleteMatch, getMatchInformations, getMatchRounds } from "@/app/backend/surreal-actions";
-
-// Simulation d'une base de données
-const matches: Match[] = []
+import { updateMatchInformations, deleteMatch, getMatchInformations } from "@/app/backend/surreal-actions";
 
 /**
  * GET /api/protected/matches/{matchId}
@@ -34,11 +30,10 @@ export async function PATCH(request: Request, { params }: { params: { matchId: s
     const updateData = await request.json()
     const { matchId } = await params;
 
-    // TODO: Check if match exist
-    const updateInformations = await updateMatchInformations(`Match:${roundId}`, updateData);
+    const updateInformations = await updateMatchInformations(`Match:${matchId}`, updateData);
     return NextResponse.json(updateInformations)
   } catch (error) {
-    return NextResponse.json({ error: "Erreur lors de la mise à jour du round" }, { status: 500 })
+    return NextResponse.json({ error: "Erreur lors de la mise à jour du match" }, { status: 500 })
   }
 }
 

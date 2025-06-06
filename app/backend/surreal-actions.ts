@@ -266,6 +266,28 @@ export async function updateRoundInformations(roundId: string, updateInformation
 }
 
 /**
+ * Modifier les informations d'un round
+ * @param matchId - L'identifiant record du round
+ * @returns Message de confirmation
+ * @throws {Error} Si la suppresion du round échoue
+ */
+export async function updateMatchInformations(matchId: string, updateInformations: string) {
+    const db = await getSurrealClient()
+
+    try {
+        let matchUpdateInformations: SurrealResponse<any> = 
+        await db.query(`UPDATE ${matchId} MERGE $content`, {content: updateInformations});
+
+        db.close();
+        return matchUpdateInformations[0][0] 
+    } catch(error) {
+        console.error("Failed to delete Match:", error)
+        throw new Error("Failed to delete Match")
+    } 
+}
+
+
+/**
  * Recuperer les informations d'un match
  * @param matchId
  * @returns
