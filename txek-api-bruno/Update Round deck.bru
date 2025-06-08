@@ -5,13 +5,15 @@ meta {
 }
 
 patch {
-  url: {{baseUrl}}/api/v1/matches/{{matchid}}/rounds/{{roundid}}
+  url: {{baseUrl}}/api/protected/matches/{{matchid}}/rounds/{{roundid}}
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    
+    "Dodo": ["red-crown", "d"],
+    "burgouz": ["x", "D"],
+    "winner": "Dodo"
   }
 }
