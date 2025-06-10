@@ -20,7 +20,7 @@ async function initializeDatabase() {
 
     await db.use({
       namespace: process.env.SURREALDB_NAMESPACE,
-      database: process.env.SURREALDB_DATABASE,
+      database: process.env.SURREALDB_AUTH_DATABASE,
     });
     
     console.log('Connected to SurrealDB');
