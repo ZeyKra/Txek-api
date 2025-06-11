@@ -1,0 +1,11 @@
+meta {
+  name: User Data
+  type: http
+  seq: 16
+}
+
+get {
+  url: {{baseUrl}}/api/protected/data
+  body: json
+  auth: inherit
+}
