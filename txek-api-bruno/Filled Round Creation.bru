@@ -1,0 +1,19 @@
+meta {
+  name: Filled Round Creation
+  type: http
+  seq: 17
+}
+
+patch {
+  url: {{baseUrl}}/api/protected/matches/{{matchid}}/rounds
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "round_index": 2,
+    "dodo": ["Dodo", "burgouz"],
+    "burgouz": []
+  }
+}

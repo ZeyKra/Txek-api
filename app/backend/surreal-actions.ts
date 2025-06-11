@@ -205,6 +205,34 @@ export async function createRound(roundData: Round, players: string[]) {
 }
 
 /**
+ * Crée un nouveau round dans la base de données et le relie à un match existant
+ * @param roundData - Les données du round à créer
+ * @returns Les données du round créé
+ * @throws {Error} Si la création du round ou la relation échoue
+ */
+export async function createFilledRound(roundData: Round, playerDecks: { [key: string]: any }) {
+    const db = await getSurrealClient()
+
+    try {
+
+        const finalRoundData: Round = {
+            ...roundData,
+        }
+        Object.entries(playerDecks).forEach(([player, deck]) => {
+            Object.assign(finalRoundData, { [player]: deck })
+        })
+
+        const roundCreationData: SurrealResponse<any> = await db.query(`CREATE ONLY Round CONTENT $item`, {item: finalRoundData})
+        
+        db.close();
+        return roundCreationData[0]
+    } catch(error) {
+        console.error("Failed to create Round:", error)
+        throw new Error("Failed to create Round")
+    } 
+}
+
+/**
  * Supprime le round
  * @param roundId - L'identifiant record du round
  * @returns Message de confirmation

@@ -1,25 +1,7 @@
 import { NextResponse } from "next/server"
 import type { Round } from "@/types/round"
-import type { Match } from "@/types/match"
-import { createRound, getMatchRounds, relateRoundToMatch } from "@/app/backend/surreal-actions"
+import { createFilledRound, relateRoundToMatch } from "@/app/backend/surreal-actions"
 
-// Simulation d'une base de données
-const matches: Match[] = []
-
-export async function GET(request: Request, { params }: { params: { matchId: string } }) {
-  const { matchId } = await params;
-
-  // TODO: Check if match exist
-  if (!matchId) {
-    return NextResponse.json({ error: "Match non trouvé" }, { status: 404 })
-  }
-
-  const matchRounds = await getMatchRounds(`Match:${matchId}`);
-  
-  return NextResponse.json(matchRounds)
-}
-
-//create round
 export async function POST(request: Request, { params }: { params: { matchId: string } }) {
   try {
 
@@ -27,8 +9,8 @@ export async function POST(request: Request, { params }: { params: { matchId: st
     const requestData = await request.json()
 
     //console.log(requestData, matchid); // DEBUG
-    if(!requestData.players || requestData.players.length !== 2) {
-      return NextResponse.json({ error: "Un match doit avoir 2 joueurs" }, { status: 400 })
+    if(!requestData.round_index) {
+      return NextResponse.json({ error: "Un round doit avoir un index" }, { status: 400 })
     }
 
     const createdAt = requestData.created_at ? new Date(requestData.created_at) : new Date();
@@ -38,10 +20,17 @@ export async function POST(request: Request, { params }: { params: { matchId: st
       status: "completed",
       round_index: requestData.round_index,  
       winner: requestData.winner || undefined,
+      // Inclure d'autres propriétés si nécessaire, en excluant created_at et round_index
     }
 
-    let roundCreationData = await createRound(newRoundData, requestData.players);
-    
+    let playerDecks = {...Object.fromEntries(
+        Object.entries(requestData).filter(([key]) => 
+          key !== 'created_at' && key !== 'round_index'
+        )
+      )}
+
+    let roundCreationData = await createFilledRound(newRoundData, playerDecks);
+
     await relateRoundToMatch(`${roundCreationData.id.tb}:${roundCreationData.id.id}`, `Match:${matchId}`);
 
     return NextResponse.json(roundCreationData, { status: 201 })
