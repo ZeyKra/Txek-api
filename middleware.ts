@@ -3,6 +3,11 @@ import type { NextRequest } from 'next/server';
 import { extractTokenFromHeader, verifyToken } from './lib/jwt';
 
 export async function middleware(request: NextRequest) {
+  // Skip OPTIONS requests
+  if (request.method === 'OPTIONS') {
+    return NextResponse.next();
+  }
+
   // Only apply middleware to /api/protected routes
   if (!request.nextUrl.pathname.startsWith('/api/protected')) {
     return NextResponse.next();
