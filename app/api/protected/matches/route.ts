@@ -19,19 +19,28 @@ export async function POST(request: Request) {
        return NextResponse.json({ error: "Un match doit avoir un Proprietaire" }, { status: 400 })
     }
 
+    const createdAt = requestData.created_at ? new Date(requestData.created_at) : new Date();
+
     const newMatch: Match = {
       completed_at: new Date(),
-      created_at: new Date(),
+      created_at: createdAt,
       players: requestData.players, // IDs des utilisateurs
       status: "created",
       round_max: requestData.round_max,
     }
 
+    if(requestData.winner) {
+      newMatch.winner = requestData.winner;
+    }
+
     const matchCreationData: SurrealResponse<any> = await createMatch(newMatch);
+
+    console.log("Match created:", matchCreationData);
+    
     
     //relateRecordedUserToMatch(requestData.owner_id, `${matchCreationData.id.tb}:${matchCreationData.id.id}`);
     
-    await relateRecordedUserToMatch(requestData.owner_id, `${matchCreationData[0].id.tb}:${matchCreationData[0].id.id}`)
+    await relateRecordedUserToMatch(requestData.owner_id, `${matchCreationData.id.tb}:${matchCreationData.id.id}`)
     return NextResponse.json(matchCreationData, { status: 201 })
   } catch (error) {
     console.error(error)
