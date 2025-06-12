@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       completed_at: new Date(),
       created_at: createdAt,
       players: requestData.players, // IDs des utilisateurs
-      status: "created",
+      status: "completed",
       round_max: requestData.round_max,
     }
 
