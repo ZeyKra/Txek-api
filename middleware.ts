@@ -3,55 +3,69 @@ import type { NextRequest } from 'next/server';
 import { extractTokenFromHeader, verifyToken } from './lib/jwt';
 
 export async function middleware(request: NextRequest) {
-  // Skip OPTIONS requests
+  const origin = request.headers.get('origin') || '';
+
+  // Pour les requêtes preflight
   if (request.method === 'OPTIONS') {
-    return NextResponse.next();
+    return new NextResponse(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Max-Age': '86400',
+      }
+    });
   }
 
-  // Only apply middleware to /api/protected routes
-  if (!request.nextUrl.pathname.startsWith('/api/protected')) {
-    return NextResponse.next();
+  // Authentification pour /api/protected
+  if (request.nextUrl.pathname.startsWith('/api/protected')) {
+    const authHeader = request.headers.get('authorization');
+    const token = extractTokenFromHeader(authHeader || '');
+    if (!token) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Authentication token is missing' }),
+        {
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': origin,
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+            'Access-Control-Allow-Credentials': 'true',
+          }
+        }
+      );
+    }
+    const payload = await verifyToken(token);
+    if (!payload) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        {
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': origin,
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+            'Access-Control-Allow-Credentials': 'true',
+          }
+        }
+      );
+    }
   }
 
-  // Get the Authorization header
-  const authHeader = request.headers.get('authorization');
-  
-  // Extract token from header
-  const token = extractTokenFromHeader(authHeader || '');
-  
-  if (!token) {
-    return new NextResponse(
-      JSON.stringify({ error: 'Authentication token is missing' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
-    );
-  }
-
-  // Verify the token
-  const payload = await verifyToken(token);
-  
-  if (!payload) {
-    return new NextResponse(
-      JSON.stringify({ error: 'Invalid or expired token' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
-    );
-  }
-
-  // Add user info to request headers for route handlers
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-user-id', payload.userId);
-  requestHeaders.set('x-user-email', payload.email);
-  if (payload.role) {
-    requestHeaders.set('x-user-role', payload.role);
-  }
-
-  // Continue with the modified request
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  // Réponse normale avec headers CORS
+  const response = NextResponse.next();
+  response.headers.set('Access-Control-Allow-Origin', origin);
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  response.headers.set('Access-Control-Max-Age', '86400');
+  return response;
 }
 
 export const config = {
-  matcher: '/api/protected/:path*',
+  matcher: ['/api/:path*'],
 };

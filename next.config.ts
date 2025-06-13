@@ -3,28 +3,34 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Disable static HTML export
   output: "standalone",
+  trailingSlash: false,
   
   // Configure headers for API routes
   async headers() {
     return [
       {
-        // Apply these headers to all routes
-        source: "/(.*)",
+        // Apply these headers to all API routes
+        source: '/api/:path*',
         headers: [
-          // Allow requests from any origin
           {
-            key: "Access-Control-Allow-Origin",
-            value: "*",
+            key: 'Access-Control-Allow-Origin',
+            value: '*', // Or specify your React Native app domain
           },
-          // Allow specific HTTP methods
           {
-            key: "Access-Control-Allow-Methods",
-            value: "GET, POST, PUT, DELETE, OPTIONS",
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
           },
-          // Allow specific headers
           {
-            key: "Access-Control-Allow-Headers",
-            value: "Content-Type, Authorization",
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization, X-Requested-With',
+          },
+          {
+            key: 'Access-Control-Allow-Credentials',
+            value: 'true',
+          },
+          {
+            key: 'Access-Control-Max-Age',
+            value: '86400',
           },
         ],
       },
